@@ -1,0 +1,189 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/04ee9f79db.js" crossorigin="anonymous"></script>
+    <title>Tarea Lab. Leng. Programacion</title>
+</head>
+<body>
+
+    <div class="body">
+        <h4 class="text-center text-h4">Mover caja desde el teclado</h4>
+
+        <p class="text-center mt-2">
+            <button onclick="startGame()" class="button_accept mr-3">Comenzar</button>
+            <button onclick="resetGame()" class="button_decline">Reiniciar</button>
+        </p>
+        <p class="text-center mt-2"></p>
+        <p class="text-center mt-3">Para mover la caja utilice las flechas direccionales del teclado <i class="fa-regular fa-keyboard"></i>: 
+            <div class="text-center" style="margin: 0 auto;">
+                <span style="position: relative; height: 40px; width: 40px">
+                    <i class="fa-solid fa-up-long " ></i>
+                </span>
+
+                <span style="position: absolute; bottom: 0; top: 14.3rem; left: 0; right: 0;">    
+                    <i class="fa-solid fa-left-long"></i>
+                    <i class="fa-solid fa-down-long" style="margin-top: 1rem!important;"></i>
+                    <i class="fa-solid fa-right-long"></i>
+                </span>
+            </div>
+
+        </p>
+
+        <div class="box_container">
+           <div id="box" class="div" ></div>
+        </div>
+
+    </div>
+
+
+
+    <script>
+        // Objeto "game" usado para poder setear la posicion del elemento, y tambien para tener referencia del mismo elemento
+        const game = { 
+            x: 0,
+            y: 0,
+            vel: 10,
+            elem: document.getElementById("box")
+        };
+
+        var game_copy = { 
+            x: 0,
+            y: 0,
+            vel: 10,
+            elem: document.getElementById("box")
+        };
+
+        var gameStarted = false;
+
+        var slidingTagLiAfterStyle = document.createElement("style");
+        // Funcion que inicia el juego
+        function startGame() {
+            slidingTagLiAfterStyle.innerHTML = `#box::after {
+                transform: rotate(180deg);
+                position: absolute;
+                padding-left: .3rem;
+                font-weight: bold;
+                color: black;
+                content: ".";
+                width: 10px;
+                height: 23px;
+                border: 0 1px 1px 1px solid black;
+                border-radius: 12px 0  0 12px;
+                /* border-radius: 3px; */
+                /* background-color: #e09f3e; */
+                background-image: linear-gradient(to left, #f83600 0%, #f9d423 100%);
+                /* background-image: linear-gradient(to top, #00c6fb 0%, #005bea 100%); */
+                /* left: 0; */
+                right: -.3rem;
+                top: -1;
+                bottom: 0;
+            }`; 
+            document.head.appendChild(slidingTagLiAfterStyle);
+            gameStarted = true;
+            let box = document.getElementById("box");
+
+            box.style.display = "block";
+
+            setTimeout(() => {
+                
+            }, timeout);
+
+        }
+        function resetGame() {
+
+            game.x = 0;
+            game.y = 0;
+            game.elem.style.left = 0 + "px";
+            game.elem.style.top = 0 + "px";
+
+            moveSquare();
+
+        }
+        
+        console.log(document.getElementById("box"))
+        
+        
+        // Listener del evento keydown para saber si se han usado las flechas y asi actualizar el objeto "game"
+        document.addEventListener('keydown', (e) => {
+
+            if( e.key == 'ArrowRight' || e.key == 'ArrowLeft' || e.key == 'ArrowDown' || e.key == 'ArrowUp') {
+                if(e.key == 'ArrowRight') {
+                    game.x += game.vel; // Aumenta la posicion en X(va hacia la derecha) aumenta en game.vel + game.x(posicion X de la caja)
+                    slidingTagLiAfterStyle.innerHTML = slidingTagLiAfterStyle.innerHTML.replace(/rotate\((\d+deg)\)/, function(match, grupo1) {
+                        let valor = parseInt(grupo1);
+                        if (valor >= -360 && valor <= 360) {
+                            return "rotate(180deg)"; // Reemplazar por el valor deseado
+                        } else {
+                            return match;
+                        }
+                    });
+                } 
+                if (e.key == 'ArrowLeft') {
+                    game.x -= game.vel;
+                    
+                    slidingTagLiAfterStyle.innerHTML = slidingTagLiAfterStyle.innerHTML.replace(/rotate\((\d+deg)\)/, function(match, grupo1) {
+                        let valor = parseInt(grupo1);
+                        if (valor >= -360 && valor <= 360) {
+                            return "rotate(90deg)"; // Reemplazar por el valor deseado
+                        } else {
+                            return match;
+                        }
+                    });
+                } 
+                if (e.key == 'ArrowDown') {
+                    game.y -= game.vel;  
+                    slidingTagLiAfterStyle.innerHTML = slidingTagLiAfterStyle.innerHTML.replace(/rotate\((\d+deg)\)/, function(match, grupo1) {
+                        let valor = parseInt(grupo1);
+                        if (valor >= -360 && valor <= 360) {
+                            return "rotate(30deg)"; // Reemplazar por el valor deseado
+                        } else {
+                            return match;
+                        }
+                    });
+                } 
+                if(e.key == 'ArrowUp') {
+                    game.y += game.vel;
+                    slidingTagLiAfterStyle.innerHTML = slidingTagLiAfterStyle.innerHTML.replace(/rotate\((\d+deg)\)/, function(match, grupo1) {
+                        let valor = parseInt(grupo1);
+                        if (valor >= -360 && valor <= 360) {
+                            return "rotate(90deg)"; // Reemplazar por el valor deseado
+                        } else {
+                            return match;
+                        }
+                    });
+                }
+                //  else {
+                //     console.log("Tecla incorrecta");
+                // }
+                moveSquare();
+                game_copy = game;
+            
+                // document.addEventListener('keyup', ( e ) => {
+                //     console.log("Tecla tocada: ", e.key)
+                // });
+            }
+        });
+
+
+        // Funcion para mover el cuadrado
+        function moveSquare() {
+            console.log("GAME X: ", game.x, " GAME Y: ", game.y);
+            console.log("GAME STYLE: ", game.elem.style.right);
+
+            if(game_copy.y != game.y) {
+
+                // moveInY    
+            }
+
+            game.elem.style.left = game.x + "px";
+            game.elem.style.top = -game.y + "px";
+        }
+
+    </script>    
+</body>
+</html>
